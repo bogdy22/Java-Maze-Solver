@@ -1,4 +1,4 @@
-import javafx.application.Application;
+package maze;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException; 
 import java.io.FileReader;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Maze extends InvalidMazeException{
+public class Maze{
 	
 	private Tile entrance;
 	private Tile exit;
@@ -14,15 +14,12 @@ public class Maze extends InvalidMazeException{
 
 	private Maze()
 	{
-		super("No args exception");
+		// super("No args exception");
 	}
 
 	public static Maze fromTxt(String input) throws InvalidMazeException, RaggedMazeException, MultipleEntranceException, MultipleExitException, NoEntranceException, NoExitException
 	{
 		Maze maze = new Maze();
-	
-		String tempReg;
-		String tempMake;
 		maze.entrance = Tile.fromChar('.');
 		maze.exit = Tile.fromChar('.');
 		
@@ -35,16 +32,20 @@ public class Maze extends InvalidMazeException{
 			String validChars = ".ex#";
 			String currentLine = mazeStream.readLine();
 			int lineLength = currentLine.length();
-			int i=0;
 
-			while(lineLength != 0)
+			while(currentLine != null)
 			{
 				ArrayList<Tile> row = new ArrayList<Tile>();
+				int i=0;
 				if(lineLength != currentLine.length())
 					throw new RaggedMazeException("\nThe maze is ragged.");
 				else
-					while(i <= currentLine.length())
+					while(i <= currentLine.length() - 1)
 					{
+						if(validChars.indexOf(currentLine.charAt(i))==-1)
+							throw new InvalidMazeException("The maze is invalid.");
+						row.add(Tile.fromChar(currentLine.charAt(i)));
+
 						if(currentLine.charAt(i) =='e')
 						{
 							if(maze.entrance.toString() == "e")
@@ -59,13 +60,12 @@ public class Maze extends InvalidMazeException{
 							maze.setExit(Tile.fromChar('x'));
 						}
 
-						if(validChars.indexOf(currentLine.charAt(i))==-1)
-							throw new InvalidMazeException("The maze is invalid.");
-						row.add(Tile.fromChar(currentLine.charAt(i)));
+	
 						i++;
 					}
 
 				currentLine = mazeStream.readLine();
+				maze.tiles.add(row);
 			}
 
 			if(maze.entrance.toString() == "")
@@ -84,12 +84,31 @@ public class Maze extends InvalidMazeException{
 		{
 			System.out.println("\nThere was a problem reading the file.");
 		}
-		
+
 	return maze;	
 	}
-	// public Tile getAdjacentTile(Tile t, Direction d){
+	
+	public Tile getAdjacentTile(Tile t, Direction d)
+	{
+		Coordinate c = getTileLocation(t);
+		int x = c.getX();
+		int y = c.getY();
+		Tile adjTile = null;
 
-	//}
+		if(d.name().equals("NORTH") && y <= tiles.size()-1)
+			adjTile = tiles.get(tiles.size()-y-2).get(x);
+
+		if(d.name().equals("SOUTH") && y <= tiles.size()-1)
+			adjTile = tiles.get(tiles.size()-y).get(x);
+
+		if(d.name().equals("EAST") && x <= tiles.get(0).size()-1)
+			adjTile = tiles.get(tiles.size()-y-1).get(x+1);
+
+		if(d.name().equals("WEST") && x > 0)
+			adjTile = tiles.get(tiles.size()-y-1).get(x-1);
+
+		return adjTile;
+	}
 
 	public Tile getEntrance()
 	{
@@ -101,13 +120,30 @@ public class Maze extends InvalidMazeException{
 		return exit;
 	}
 
-	// public Tile getTileAtLocation(Coordinate c){
+	public Tile getTileAtLocation(Coordinate c)
+	{
+		int x = c.getX();
+		int y = c.getY();
+		Tile newLocation = null;
 
-	// }
+		if( x <= tiles.get(0).size()-1 && y <= tiles.size()-1)
+			newLocation = tiles.get(tiles.size()-y-1).get(x);
 
-	// public Coordinate getTileLocation(Tile t){
+		return newLocation;		
 
-	// }
+	}
+
+	public Coordinate getTileLocation(Tile t)
+	{
+		Coordinate c = null;
+		int i,j;
+		for(i=0; i<= tiles.size()-1; i++)
+			for(j=0; j<=tiles.get(0).size()-1; j++)
+				if(tiles.get(i).get(j) == t)
+					c = new Coordinate(j, (tiles.size()-i-1));
+
+		return c;
+	}
 
 	public List<List<Tile>> getTiles()
 	{
@@ -124,12 +160,29 @@ public class Maze extends InvalidMazeException{
 		exit = t;
 	}
 
-	//  public String toString()
-	// {
-	// 	int i;
-	// 	for(i = 0; i<=)
+	 public String toString()
+	{
+		String mazeString = "";
+		int i,j,k;
+		System.out.println(tiles.get(0).size());
+		// System.out.println(tiles.size());
+		for(i=0; i<=tiles.size()-1;i++)
+			{
+				for(j=0;j<=tiles.get(0).size()-1;j++)
+				{
+					mazeString =  mazeString + tiles.get(i).get(j).toString() ;
+				}
+				mazeString = mazeString + "\n";
+			}
+		
+		// System.out.println();
+		// System.out.print("     ");
+		// for(k=0;k<=tiles.size()-1;k++)
+		// 	System.out.println(String.valueOf(k) + " ");
 
-	// }
+		return mazeString;
+
+	}
 
 	public class Coordinate
 	{
@@ -155,7 +208,7 @@ public class Maze extends InvalidMazeException{
 		public String toString()
 		{
 			String str = "";
-			str = "(" + String.valueOf(x) + "," + String.valueOf(y) + ")";
+			str = "(" + String.valueOf(x) + ", " + String.valueOf(y) + ")";
 			return str;
 		}
 	}
