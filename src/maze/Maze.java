@@ -17,62 +17,65 @@ public class Maze{
 		// super("No args exception");
 	}
 
-	public static Maze fromTxt(String input) throws InvalidMazeException, RaggedMazeException, MultipleEntranceException, MultipleExitException, NoEntranceException, NoExitException
+	public static Maze fromTxt (String input) throws FileNotFoundException, IOException, InvalidMazeException,IOException 
 	{
 		Maze maze = new Maze();
-		maze.entrance = Tile.fromChar('.');
-		maze.exit = Tile.fromChar('.');
-		
-		try (
+		int row = 0;
+		boolean exitMaze = false;
+		boolean entranceMaze = false; 
+		String validChars = "ex.#";
+
+		try(
 		FileReader mazeFile = new FileReader(input);
 		BufferedReader mazeStream = new BufferedReader(mazeFile);
 		)
 
 		{
-			String validChars = ".ex#";
 			String currentLine = mazeStream.readLine();
 			int lineLength = currentLine.length();
 
-			while(currentLine != null)
+			while (currentLine != null)
 			{
-				ArrayList<Tile> row = new ArrayList<Tile>();
-				int i=0;
+				int i = 0;
+				maze.tiles.add(new ArrayList<Tile>());
+				
 				if(lineLength != currentLine.length())
-					throw new RaggedMazeException("\nThe maze is ragged.");
-				else
-					while(i <= currentLine.length() - 1)
+	    			throw new RaggedMazeException("The maze is ragged.");
+	    	
+	    		else 
+					while (i < currentLine.length())
 					{
-						if(validChars.indexOf(currentLine.charAt(i))==-1)
-							throw new InvalidMazeException("The maze is invalid.");
-						row.add(Tile.fromChar(currentLine.charAt(i)));
 
-						if(currentLine.charAt(i) =='e')
+						if (validChars.indexOf(currentLine.charAt(i)) == -1)
+							throw new InvalidMazeException("An invalid character was found in the maze");
+
+						maze.tiles.get(row).add(Tile.fromChar(currentLine.charAt(i)));
+						if (currentLine.charAt(i) == 'e') 
 						{
-							if(maze.entrance.toString() == "e")
-								throw new MultipleEntranceException("The maze has more than one entrance.");
-							maze.setEntrance(Tile.fromChar('e'));
+							maze.setEntrance(maze.tiles.get(row).get(maze.tiles.get(row).size() - 1));
+							entranceMaze = true;
 						}
 
-						if(currentLine.charAt(i) == 'x')
-						{
-							if(maze.entrance.toString() == "x")
-								throw new MultipleExitException("The maze has more than one exit.");
-							maze.setExit(Tile.fromChar('x'));
-						}
+						else 
+							if (currentLine.charAt(i) == 'x')
+							{
+								maze.setExit(maze.tiles.get(row).get(maze.tiles.get(row).size() - 1));
+								exitMaze = true;
+							}
 
-	
 						i++;
 					}
-
+				row++;
 				currentLine = mazeStream.readLine();
-				maze.tiles.add(row);
 			}
 
-			if(maze.entrance.toString() == "")
-				throw new NoEntranceException("The maze has no entrance.");
-			if(maze.exit.toString() == "")
-				throw new NoExitException("The maze has no exit.");
-			
+			if (exitMaze == false){
+				throw new NoExitException("No exit found");
+			}
+
+			if (entranceMaze == false){
+				throw new NoEntranceException("No entrance found");
+			}
 		}
 
 		catch(FileNotFoundException e) 
@@ -85,28 +88,31 @@ public class Maze{
 			System.out.println("\nThere was a problem reading the file.");
 		}
 
-	return maze;	
+		return maze;
 	}
-	
+
 	public Tile getAdjacentTile(Tile t, Direction d)
 	{
 		Coordinate c = getTileLocation(t);
 		int x = c.getX();
 		int y = c.getY();
+		//System.out.println(c);
 		Tile adjTile = null;
 
-		if(d.name().equals("NORTH") && y <= tiles.size()-1)
+		if(d.name().equals("NORTH") && y < tiles.size()-1)
 			adjTile = tiles.get(tiles.size()-y-2).get(x);
 
-		if(d.name().equals("SOUTH") && y <= tiles.size()-1)
+		if(d.name().equals("SOUTH") && y > 0)
 			adjTile = tiles.get(tiles.size()-y).get(x);
 
-		if(d.name().equals("EAST") && x <= tiles.get(0).size()-1)
+		if(d.name().equals("EAST") && x < tiles.get(0).size()-1)
 			adjTile = tiles.get(tiles.size()-y-1).get(x+1);
 
 		if(d.name().equals("WEST") && x > 0)
 			adjTile = tiles.get(tiles.size()-y-1).get(x-1);
 
+		// System.out.print("adjTIle : ");
+		// System.out.println(adjTile);
 		return adjTile;
 	}
 
@@ -135,14 +141,14 @@ public class Maze{
 
 	public Coordinate getTileLocation(Tile t)
 	{
-		Coordinate c = null;
 		int i,j;
-		for(i=0; i<= tiles.size()-1; i++)
-			for(j=0; j<=tiles.get(0).size()-1; j++)
-				if(tiles.get(i).get(j) == t)
-					c = new Coordinate(j, (tiles.size()-i-1));
-
-		return c;
+		for (i=0;i<=tiles.size()-1; i++)
+			for(j=0;j<=tiles.get(0).size()-1;j++)
+				{	
+					if(tiles.get(i).get(j) == t)
+						return new Coordinate(j, (tiles.size()-i-1));
+			}
+		return null;
 	}
 
 	public List<List<Tile>> getTiles()
@@ -164,7 +170,7 @@ public class Maze{
 	{
 		String mazeString = "";
 		int i,j,k;
-		System.out.println(tiles.get(0).size());
+		// System.out.println(tiles.get(0).size());
 		// System.out.println(tiles.size());
 		for(i=0; i<=tiles.size()-1;i++)
 			{

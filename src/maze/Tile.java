@@ -1,3 +1,4 @@
+package maze;
 
 public class Tile
 {
@@ -26,7 +27,7 @@ public class Tile
 
 	public Type getType()
 	{
-		return this.type;
+		return type;
 	}
 
 	public boolean isNavigable()
@@ -55,4 +56,5 @@ public class Tile
 	{
 		CORRIDOR, ENTRANCE, EXIT, WALL
 	}
+
 }
