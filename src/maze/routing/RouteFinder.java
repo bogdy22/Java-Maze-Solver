@@ -16,6 +16,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 
+
+/**
+* Class provided for finding the route out of a maze
+* @author Bogdan-Gabriel Rotaru
+* @version 29th April 2021
+*/
 public class RouteFinder implements Serializable
 {
 	private Maze maze;
@@ -23,6 +29,12 @@ public class RouteFinder implements Serializable
 	private boolean finished;
 	private List<Tile> visitedList = new ArrayList<Tile>();
 
+
+	/**
+	* Constructor of the class that initialises the route with the maze entrance and starts to make steps through the exit
+	* @param m the maze that we want to solve (find a route)
+	* @throws java.maze.routing.NoRouteFoundException Indicates that the maze could not be solved, as there is no route out of it
+	*/
 	public RouteFinder(Maze m) throws NoRouteFoundException
 	{
 		maze = m;
@@ -30,18 +42,24 @@ public class RouteFinder implements Serializable
 		route.push(maze.getEntrance());
 		finished = false;
 		while(finished == false)
-			{
 				finished = step();
-				// if(finished == true)
-				// 	System.out.println("Maze solved.");
-			}
 	}
 
+
+	/**
+	* Gets the maze 
+	* @return Returns the maze to be solved
+	*/
 	public Maze getMaze()
 	{
 		return maze;
 	}
 
+
+	/**
+	* Gets the route of the maze
+	* @return Returns a list of tiles representing the route that has been found 
+	*/
 	public List<Tile> getRoute()
 	{
 		List<Tile> routeSaved = new ArrayList<Tile>();
@@ -51,14 +69,28 @@ public class RouteFinder implements Serializable
 			routeSaved.add(steps.pop());
 
 		Collections.reverse(routeSaved);
+		System.out.println(routeSaved);
 		return routeSaved;
 	}
 
+
+	/**
+	* Check if the maze has been solved
+	* @return Returns a boolean value, which is true if the maze has been solved, or false otherwise
+	*/
 	public boolean isFinished()
 	{
 		return finished;
 	}
 
+
+	/**
+	* Load the route at its last state
+	* @param filename the name of the file where the route is saved
+	* @return Returns the route from the input file
+	* @throws java.io.IOexception Indicates that there is a problem with the file
+	* @throws java.io.FileNotFoundException Indicates that the file cannot be found
+	*/
 	public static RouteFinder load(String filename)
 	{
 		ObjectInputStream objectStream = null;
@@ -79,6 +111,12 @@ public class RouteFinder implements Serializable
         return null;
 	}
 
+	/**
+	* Save the current route in a file
+	* @param filename the name of the file where the route should be saved
+	* @throws java.io.IOexception Indicates that there is a problem with the file
+	* @throws java.io.FileNotFoundException Indicates that the file cannot be opened for writing
+	*/
 	public void save(String filename){
 		ObjectOutputStream objectStream = null;
         try {
@@ -97,6 +135,12 @@ public class RouteFinder implements Serializable
         }
     }
 
+
+    /**
+    * Makes the next move in the maze, trying to find the route to the exit
+    * @return Returns true if the maze is solved, otherwise returns false
+    * @throws java.maze.routing.NoRouteFoundException Indicates that there is no route out of the maze
+    */
 	public boolean step() throws NoRouteFoundException
 	{
 		if(isFinished() == true)
@@ -170,11 +214,15 @@ public class RouteFinder implements Serializable
 			return false;
 		}
 
-	// System.out.println("Poped:");
 	route.pop();
 	return false;
 	}
 
+
+	/**
+	* Creates a string to visualise the maze with the route ilustrated
+	* @return Returns a string to illustrate the solved maze and the route 
+    */
 	public String toString()
 	{
 		String mazeString = "";
@@ -193,8 +241,7 @@ public class RouteFinder implements Serializable
 				}
 
 				mazeString = mazeString + "\n";
-	}
-	return mazeString;
-
+			}	
+		return mazeString;
 	}
 }
