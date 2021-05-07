@@ -1,15 +1,15 @@
 package maze;
 
+import java.io.Serializable;
 
 /**
 * Class provided for creation of tiles of the maze
 * @author Bogdan-Gabriel Rotaru
 * @version 29th April 2021
 */
-public class Tile
+public class Tile implements Serializable
 {
 	private Type type;
-
 
 	/**
 	* Constructor of Tile class, which initialise the type of the tile

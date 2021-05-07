@@ -1,6 +1,5 @@
 package maze;
 
-
 /**
 * Class provided for throwing an exception when there is no exit in a maze
 * @author Bogdan-Gabriel Rotaru
@@ -10,7 +9,7 @@ public class NoExitException extends InvalidMazeException
 {
 
 	/**
-	* Constructor that displays a message when the error is thrown
+	* Constructor that displays a message when the exception is thrown
 	* @param message the message to be displayed
 	*/
 	public NoExitException(String message)

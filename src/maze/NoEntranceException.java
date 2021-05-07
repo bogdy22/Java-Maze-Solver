@@ -7,9 +7,8 @@ package maze;
 */
 public class NoEntranceException extends InvalidMazeException
 {
-
 	/**
-	* Constructor that displays a message when the error is thrown
+	* Constructor that displays a message when the exception is thrown
 	* @param message the message to be displayed
 	*/
 	public NoEntranceException(String message)

@@ -1,20 +1,21 @@
 package maze;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException; 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
+
 
 /**
 * Class provided for generating the maze
 * @author Bogdan-Gabriel Rotaru
 * @version 29th April 2021
 */
-
-
-public class Maze{
-	
+public class Maze implements Serializable
+{	
 	private Tile entrance;
 	private Tile exit;
 	private List<List<Tile>> tiles = new ArrayList<List<Tile>>();
@@ -23,10 +24,7 @@ public class Maze{
 	/**
 	* Constructor of the Maze class, which is empty
 	*/
-	private Maze()
-	{
-	}
-
+	private Maze(){}
 
 	/**
 	* Creates a Maze object from reading a txt file
@@ -253,7 +251,7 @@ public class Maze{
 	* Create a string that illustrates the maze
 	* @return Returns a string that visualises the entire maze
 	*/
-	 public String toString()
+	public String toString()
 	{
 		String mazeString = "";
 		int i,j,k;

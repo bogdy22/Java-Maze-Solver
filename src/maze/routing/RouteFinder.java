@@ -41,8 +41,8 @@ public class RouteFinder implements Serializable
 		route = new Stack<Tile>();
 		route.push(maze.getEntrance());
 		finished = false;
-		while(finished == false)
-				finished = step();
+		if(finished == true)
+			System.out.println("Maze Solved.");
 	}
 
 
@@ -69,7 +69,6 @@ public class RouteFinder implements Serializable
 			routeSaved.add(steps.pop());
 
 		Collections.reverse(routeSaved);
-		System.out.println(routeSaved);
 		return routeSaved;
 	}
 
@@ -94,22 +93,36 @@ public class RouteFinder implements Serializable
 	public static RouteFinder load(String filename)
 	{
 		ObjectInputStream objectStream = null;
-        try {
+		
+        try 
+        {
             objectStream = new ObjectInputStream(new FileInputStream(filename));
             return (RouteFinder)objectStream.readObject();
-        } catch (FileNotFoundException e) {
+        } 
+
+        catch (FileNotFoundException e) 
+        {
             System.out.println("Error: Could not read " + filename);
-        } catch (IOException | ClassNotFoundException e) {
+        } 
+
+        catch (IOException | ClassNotFoundException e) 
+        {
             System.out.println("Error: problem when reading "+ filename);
-        } finally {
-            try {
-                objectStream.close();
-            } catch (IOException e) {
-                System.out.println("Error: IOException when closing "+ filename);
-            }
-        }
+        } finally 
+        	{
+	            try 
+	            {
+	                objectStream.close();
+	            }
+
+	            catch (IOException e) 
+	            {
+	                System.out.println("Error: IOException when closing "+ filename);
+	            }
+	        }
         return null;
 	}
+
 
 	/**
 	* Save the current route in a file
@@ -117,27 +130,41 @@ public class RouteFinder implements Serializable
 	* @throws java.io.IOexception Indicates that there is a problem with the file
 	* @throws java.io.FileNotFoundException Indicates that the file cannot be opened for writing
 	*/
-	public void save(String filename){
+	public void save(String filename)
+	{
 		ObjectOutputStream objectStream = null;
-        try {
+
+        try 
+        {
             objectStream = new ObjectOutputStream(new FileOutputStream(filename));
             objectStream.writeObject(this);
-        } catch (FileNotFoundException e) {
+        } 
+
+        catch (FileNotFoundException e) 
+        {
             System.out.println("Error: Could not open " + filename + " for writing.");
-        } catch (IOException e) {
+        } 
+
+        catch (IOException e) 
+        {
             System.out.println("Error: IOException when writing "+ filename);
-        } finally {
-            try {
-                objectStream.close();
-            } catch (IOException e) {
-                System.out.println("Error: IOException when closing "+ filename);
-            }
-        }
+        } finally 
+        	{
+	            try 
+	            {
+	                objectStream.close();
+	            } 
+
+	            catch (IOException e) 
+	            {
+	                System.out.println("Error: IOException when closing "+ filename);
+	            }
+        	}
     }
 
 
     /**
-    * Makes the next move in the maze, trying to find the route to the exit
+    * Makes the next move in the maze, trying to find the route to the exit. Searching for corridors around the current location and going on
     * @return Returns true if the maze is solved, otherwise returns false
     * @throws java.maze.routing.NoRouteFoundException Indicates that there is no route out of the maze
     */
@@ -220,7 +247,7 @@ public class RouteFinder implements Serializable
 
 
 	/**
-	* Creates a string to visualise the maze with the route ilustrated
+	* Creates a string to visualise the maze with the route illustrated
 	* @return Returns a string to illustrate the solved maze and the route 
     */
 	public String toString()
@@ -244,4 +271,15 @@ public class RouteFinder implements Serializable
 			}	
 		return mazeString;
 	}
+
+
+	/**
+	* Method to get the list of visited tiles 
+	* @return Returns a list of tiles that were visited 
+	*/
+	public List<Tile> visited()
+	{
+		return visitedList;
+	}
 }
+

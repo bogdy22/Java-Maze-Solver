@@ -7,6 +7,10 @@ package maze;
 */
 public class InvalidMazeException extends Exception
 {
+	/**
+	* Constructor that shows a message when the exception is thrown
+	* @param message the message to be displayed
+	*/
 	public InvalidMazeException(String message)
 	{
 		super(message);
